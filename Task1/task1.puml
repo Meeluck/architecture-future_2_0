@@ -1,0 +1,82 @@
+@startuml
+!include <C4/C4_Container>
+
+title Будущее 2.0 — целевая платформа данных через год (C4, Container)
+
+' LAYOUT_TOP_DOWN()
+' skinparam linetype ortho
+skinparam nodesep 65
+skinparam ranksep 75
+
+Person(business_user, "Бизнес-пользователь", "Собирает свои отчёты в рамках выданных прав")
+Person(domain_team, "Команда домена", "Владеет источниками, контрактами и data products своего домена")
+
+System_Ext(iam, "Корпоративный IAM / IdP", "SSO, MFA, роли и группы")
+System_Ext(power_bi, "Power BI", "Существующие отчёты на общем семантическом слое")
+
+System_Ext(legacy, "Легаси DWH + PowerBuilder", "SQL Server 2008; временно остаётся системой учёта и источником миграции")
+System_Ext(ai_services, "Медицинские ИИ-сервисы", "Обрабатывают медицинские данные в отдельном защищённом контуре")
+System_Ext(fintech, "Финтех-сервисы", "Golang/Java; владеют финансовыми операционными данными")
+System_Ext(new_business, "Новые домены", "Фармацевтические компании и производитель оборудования")
+
+System_Boundary(data_platform, "Облачная платформа данных и самообслуживания") {
+  Container(ingestion, "Интеграционная платформа", "API + event broker + CDC", "Стандартный вход для пакетных данных и событий; валидация контрактов")
+  ContainerDb(raw_lake, "Сырая зона", "MinIO (S3-compatible API)", "Неизменяемые доменные данные, разделённые по bucket, зонам доступа и срокам хранения")
+  Container(domain_runtime, "Доменные workspaces и data products", "Python/SQL/Spark jobs", "Независимые области клиник/головного офиса, финтеха и новых доменов; отдельные права, квоты и CI/CD")
+  ContainerDb(curated_store, "Курируемая аналитическая зона", "MinIO + Apache Iceberg", "Версионируемые data products, витрины и агрегаты для отчётности")
+  Container(iceberg_catalog, "Технический каталог Iceberg", "Project Nessie", "Снимки, ветки и ссылки на метаданные Iceberg-таблиц")
+  Container(query_service, "Сервис запросов и семантический слой", "Dremio", "SQL-доступ, единые бизнес-метрики, кеш и изоляция нагрузки")
+  Container(portal, "Портал самообслуживания", "Web UI поверх Dremio API", "Каталог, конструктор отчётов, запрос доступа и выгрузка")
+
+  Container(catalog, "Бизнес-каталог и управление доступом", "DataHub + policy engine", "Контракты, владельцы, lineage, классификация, политики и аудит")
+  Container(orchestration, "Оркестрация, качество и наблюдаемость", "Apache Airflow + PostgreSQL metadata DB", "DAG, расписания, тесты качества, SLA, алерты и технический lineage")
+}
+
+Lay_R(ingestion, raw_lake)
+Lay_R(raw_lake, domain_runtime)
+Lay_R(domain_runtime, curated_store)
+Lay_R(curated_store, query_service)
+Lay_R(query_service, portal)
+Lay_R(portal, business_user)
+Lay_D(domain_runtime, catalog)
+Lay_D(raw_lake, orchestration)
+Lay_D(curated_store, iceberg_catalog)
+
+Rel(ingestion, raw_lake, "Сохраняет по доменным зонам")
+Rel(raw_lake, domain_runtime, "Отдаёт данные своей зоны")
+Rel(domain_runtime, curated_store, "[S2/S3] Публикует data products")
+Rel(curated_store, query_service, "[S1] Отдаёт витрины и агрегаты")
+Rel(query_service, portal, "[S1] Возвращает отчёт с учётом прав", "SQL/REST")
+Rel(portal, business_user, "[S1] Показывает конструктор и отчёт", "HTTPS")
+
+Rel(portal, iam, "Аутентифицирует пользователя", "OIDC/OAuth 2.0")
+Rel(portal, catalog, "Показывает доступные наборы и оформляет доступ", "API")
+Rel(power_bi, query_service, "[S1] Использует те же метрики и политики", "SQL/BI connector")
+Rel(query_service, catalog, "[S4] Получает политики и определения метрик", "API")
+
+Rel(legacy, ingestion, "Разрешённые данные; без медкарт и снимков", "[S1] CDC/batch")
+Rel(fintech, ingestion, "[S2] Публикует по контракту", "Events/API/CDC")
+Rel(new_business, ingestion, "[S3] Подключается по контракту", "Events/API/batch")
+Rel(ai_services, ingestion, "Только обезличенные операционные метрики", "Events/API")
+Rel(legacy, ai_services, "Медицинские данные — вне аналитической платформы", "Защищённый API")
+
+Rel(domain_team, domain_runtime, "[S2] Независимо развёртывает свой pipeline", "CI/CD")
+Rel(domain_runtime, catalog, "Публикует метаданные, качество и lineage", "API")
+Rel(domain_runtime, iceberg_catalog, "Фиксирует версии Iceberg-таблиц", "Nessie API")
+Rel(query_service, iceberg_catalog, "Получает актуальные метаданные Iceberg", "Nessie API")
+Rel(orchestration, ingestion, "Контролирует SLA загрузок")
+Rel(orchestration, domain_runtime, "Запускает pipeline и проверяет качество")
+
+SHOW_LEGEND()
+
+note right of data_platform
+  S1 — быстрая отчётность и self-service
+  S2 — независимое развитие доменов
+  S3 — подключение нового бизнеса по контракту
+  S4 — безопасность и надёжность
+
+  Медкарты, истории болезни, снимки и результаты
+  исследований в эту платформу не загружаются.
+end note
+
+@enduml
