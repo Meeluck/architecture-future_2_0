@@ -2,6 +2,15 @@
 Task1/task1_draft.md
 Task2/task2_draft.md
 Task3/task3_draft.md
+Task4/task4_draft.md
+
+# Локальные файлы Terraform: кеш провайдеров, состояние и сохранённые планы.
+Task4/.terraform/
+Task4/*.tfstate
+Task4/*.tfstate.*
+Task4/*.tfplan
+Task4/crash.log
+Task4/crash.*.log
 
 # Локальные файлы интерактивного технологического радара.
 Task3/tech_radar/node_modules/
