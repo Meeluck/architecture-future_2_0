@@ -1,0 +1,9 @@
+<svg width="240" height="48" viewBox="0 0 240 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="24" cy="24" r="20" stroke="#38BDF8" stroke-width="2"/>
+  <circle cx="24" cy="24" r="13" stroke="#F59E0B" stroke-width="2"/>
+  <circle cx="24" cy="24" r="6" fill="#34D399"/>
+  <path d="M24 4V44M4 24H44" stroke="#EAF2FF" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+  <path d="M24 24L39 10" stroke="#F43F5E" stroke-width="2.5" stroke-linecap="round"/>
+  <text x="56" y="21" fill="#EAF2FF" font-family="Arial, sans-serif" font-size="16" font-weight="700">БУДУЩЕЕ 2.0</text>
+  <text x="56" y="38" fill="#BAE6FD" font-family="Arial, sans-serif" font-size="13">TECH RADAR</text>
+</svg>

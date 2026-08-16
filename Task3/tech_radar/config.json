@@ -1,0 +1,123 @@
+{
+  "basePath": "/",
+  "baseUrl": "",
+  "editUrl": "",
+  "logoFile": "/logo.svg",
+  "jsFile": "",
+  "toggles": {
+    "showChart": true,
+    "showTagFilter": true,
+    "showQuadrantList": true,
+    "showEmptyRings": false
+  },
+  "sections": ["radar", "tags", "list"],
+  "colors": {
+    "foreground": "#eaf2ff",
+    "background": "#173b57",
+    "highlight": "#f59e0b",
+    "content": "#ffffff",
+    "text": "#263445",
+    "link": "#0e7490",
+    "border": "rgba(255, 255, 255, 0.16)",
+    "tag": "rgba(255, 255, 255, 0.14)"
+  },
+  "quadrants": [
+    {
+      "id": "languages-and-frameworks",
+      "title": "Языки и фреймворки",
+      "description": "Языки существующих и новых доменных сервисов.",
+      "color": "#2563eb"
+    },
+    {
+      "id": "methods-and-patterns",
+      "title": "Практики и паттерны",
+      "description": "Правила владения данными, интеграции, качества и эксплуатации.",
+      "color": "#0f766e"
+    },
+    {
+      "id": "platforms-and-operations",
+      "title": "Платформы",
+      "description": "Хранение, вычисления, интеграция и эксплуатационный фундамент.",
+      "color": "#7c3aed"
+    },
+    {
+      "id": "tools",
+      "title": "Инструменты",
+      "description": "Оркестрация, каталог, BI, портал и управление доступом.",
+      "color": "#ea580c"
+    }
+  ],
+  "rings": [
+    {
+      "id": "adopt",
+      "title": "Используем",
+      "description": "Стандарт для новой разработки и эксплуатации.",
+      "color": "#15803d",
+      "radius": 0.5,
+      "strokeWidth": 5
+    },
+    {
+      "id": "trial",
+      "title": "Пилот",
+      "description": "Целевой кандидат, который должен пройти проверку реальной нагрузкой и отказами.",
+      "color": "#2563eb",
+      "radius": 0.69,
+      "strokeWidth": 3
+    },
+    {
+      "id": "assess",
+      "title": "Изучаем",
+      "description": "Возможное развитие после подтверждения бизнес-потребности.",
+      "color": "#d97706",
+      "radius": 0.85,
+      "strokeWidth": 2
+    },
+    {
+      "id": "hold",
+      "title": "Стоп",
+      "description": "Замораживаем новую разработку и выводим зависимость по частям.",
+      "color": "#dc2626",
+      "radius": 1,
+      "strokeWidth": 0.75
+    }
+  ],
+  "flags": {
+    "new": {
+      "color": "#f43f5e",
+      "title": "Новое",
+      "titleShort": "N",
+      "description": "Новое решение в этой версии радара."
+    },
+    "changed": {
+      "color": "#38bdf8",
+      "title": "Изменено",
+      "titleShort": "C",
+      "description": "Статус или способ использования изменён."
+    },
+    "default": {
+      "description": "Статус не менялся."
+    }
+  },
+  "chart": {
+    "size": 800,
+    "blipSize": 12
+  },
+  "social": [],
+  "imprint": "",
+  "labels": {
+    "title": "Технологический радар «Будущее 2.0»",
+    "imprint": "",
+    "quadrant": "Технические области",
+    "quadrantOverview": "Подробнее",
+    "zoomIn": "Приблизить",
+    "filterByTag": "Фильтр по сценарию или теме",
+    "footer": "Учебный проект по развитию архитектуры «Будущего 2.0»",
+    "notUpdated": "Давно не пересматривалось",
+    "notFound": "404",
+    "pageAbout": "Как пользоваться",
+    "pageOverview": "Обзор технологий",
+    "pageSearch": "Поиск",
+    "searchPlaceholder": "Найти технологию или практику",
+    "metaDescription": "Технологический радар целевой платформы данных компании «Будущее 2.0»."
+  }
+}

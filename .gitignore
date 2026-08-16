@@ -2,3 +2,12 @@
 Task1/task1_draft.md
 Task2/task2_draft.md
 Task3/task3_draft.md
+
+# Локальные файлы интерактивного технологического радара.
+Task3/tech_radar/node_modules/
+Task3/tech_radar/build/
+Task3/tech_radar/.techradar/
+Task3/tech_radar/.cache/
+Task3/tech_radar/*.log
+
+tech_radar_demo/*
