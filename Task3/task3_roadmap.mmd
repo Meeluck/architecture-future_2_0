@@ -1,0 +1,33 @@
+flowchart LR
+    P1["М0–М2<br/><b>Договориться и поставить границы</b><br/>Домены, владельцы, SLO, backlog,<br/>запрет новой логики в легаси"]
+    P2["М2–М4<br/><b>Поднять безопасный фундамент</b><br/>Cloud landing zone, IAM, IaC,<br/>MinIO/Iceberg, Airflow, Dremio, DataHub"]
+    P3["М4–М6<br/><b>Провести данные end-to-end</b><br/>Первые data products,<br/>контракты и портал MVP"]
+    P4["М6–М9<br/><b>Запустить beta и дать автономность</b><br/>Общая семантика, доменные CI/CD,<br/>пилот фармы и оборудования"]
+    P5["М9–М12<br/><b>Перейти в production</b><br/>Нагрузочные и DR-тесты,<br/>миграция отчётов и обучение"]
+
+    P1 --> P2 --> P3 --> P4 --> P5
+
+    Q1["Gate 1<br/>Классификация данных;<br/>медкарты исключены"]
+    Q2["Gate 2<br/>IAM, шифрование, аудит;<br/>успешный restore"]
+    Q3["Gate 3<br/>Финансовая сверка;<br/>quality SLA и lineage"]
+    Q4["Gate 4<br/>Row/column policies;<br/>нет обхода через DWH"]
+    Q5["Gate 5<br/>SLO, failover, DR и ИБ;<br/>разрешение на production"]
+
+    Q1 --> Q2 --> Q3 --> Q4 --> Q5
+    P1 -.-> Q1
+    P2 -.-> Q2
+    P3 -.-> Q3
+    P4 -.-> Q4
+    P5 -.-> Q5
+
+    M1{{"Промежуточная цель:<br/>архитектура и домены согласованы"}}
+    M2{{"Годовая цель:<br/>self-service работает,<br/>домены развиваются независимо"}}
+    P1 --> M1
+    P5 --> M2
+
+    classDef phase fill:#e7f1ff,stroke:#0d6efd,color:#052c65
+    classDef gate fill:#fff3cd,stroke:#997404,color:#4d3b00
+    classDef milestone fill:#d1e7dd,stroke:#146c43,color:#0a3622
+    class P1,P2,P3,P4,P5 phase
+    class Q1,Q2,Q3,Q4,Q5 gate
+    class M1,M2 milestone

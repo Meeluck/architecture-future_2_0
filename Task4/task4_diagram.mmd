@@ -1,0 +1,62 @@
+---
+title: "Будущее 2.0 — автоматизация учебного стенда в Yandex Cloud"
+config:
+  theme: base
+  flowchart:
+    curve: linear
+    nodeSpacing: 35
+    rankSpacing: 45
+---
+flowchart TB
+    subgraph MANUAL["Подготавливается или запускается вручную"]
+        PREP["Рабочая станция разработчика<br/>Terraform CLI и Yandex Cloud CLI<br/>IAM-токен и IDs в переменных окружения<br/>локальная пара SSH-ключей"]
+    end
+
+    subgraph YC["Yandex Cloud"]
+        direction TB
+        PROVIDER["Yandex Cloud Provider<br/>читает желаемое состояние"]
+        IMAGE["Готовый образ Ubuntu 22.04<br/>data source, не создаётся Terraform"]
+
+        subgraph MANAGED["Создаётся и удаляется Terraform"]
+            direction LR
+            VPC["VPC Network"]
+            SUBNET["Subnet<br/>10.10.1.0/24"]
+            SG["Security Group<br/>SSH 22 только с admin_cidr<br/>исходящий трафик разрешён"]
+            VM["Compute VM<br/>2 vCPU, 4 GiB RAM<br/>preemptible"]
+            BOOT["Boot Disk<br/>20 GiB network-hdd"]
+            DATA["Data Disk<br/>30 GiB network-hdd"]
+            NAT["Динамический внешний IPv4<br/>one-to-one NAT"]
+        end
+    end
+
+    PREP -- "terraform init / plan / apply" --> PROVIDER
+    PREP -. "YC_TOKEN, YC_CLOUD_ID, YC_FOLDER_ID" .-> PROVIDER
+    PROVIDER --> VPC
+    VPC --> SUBNET
+    VPC --> SG
+    SUBNET --> VM
+    SG --> VM
+    IMAGE -. "image_id" .-> BOOT
+    BOOT --> VM
+    DATA --> VM
+    NAT --> VM
+    PREP -. "public key" .-> VM
+    PREP -- "SSH через NAT" --> VM
+
+    SOFTWARE["Вручную после apply,<br/>если нужна демонстрация:<br/>Docker и один MinIO"]
+    DEFERRED["Не входит в учебный apply:<br/>Airflow, Nessie, Dremio, DataHub,<br/>Kubernetes, балансировщик и multi-AZ"]
+    VM -. "ручная настройка ПО" .-> SOFTWARE
+    SOFTWARE -. "следующие этапы целевой архитектуры" .-> DEFERRED
+
+    classDef tf fill:#d1e7dd,stroke:#146c43,color:#0a3622,stroke-width:1.5px;
+    classDef manual fill:#fff3cd,stroke:#997404,color:#4d3b00,stroke-width:1.2px;
+    classDef external fill:#e9ecef,stroke:#6c757d,color:#212529,stroke-width:1.2px;
+    classDef deferred fill:#f8d7da,stroke:#b02a37,color:#421015,stroke-width:1.2px,stroke-dasharray: 5 5;
+    class VPC,SUBNET,SG,VM,BOOT,DATA,NAT tf;
+    class PREP,SOFTWARE manual;
+    class PROVIDER,IMAGE external;
+    class DEFERRED deferred;
+
+    style MANUAL fill:#fffcf0,stroke:#997404,stroke-width:1px;
+    style YC fill:#f8fafc,stroke:#667085,stroke-width:1px;
+    style MANAGED fill:#f2fbf5,stroke:#146c43,stroke-width:1px;
