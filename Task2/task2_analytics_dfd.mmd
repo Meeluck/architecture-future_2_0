@@ -1,0 +1,63 @@
+---
+title: "Будущее 2.0 — DFD 2: публикация данных и self-service"
+config:
+  theme: base
+  flowchart:
+    curve: linear
+    nodeSpacing: 35
+    rankSpacing: 50
+---
+flowchart TB
+    P1(["<b>P1</b><br/>Клиент и согласия"]):::process
+    P2(["<b>P2</b><br/>Клиническая<br/>деятельность"]):::process
+    P3(["<b>P3</b><br/>Медицинский ИИ"]):::process
+    P4(["<b>P4</b><br/>Финтех"]):::process
+    P5(["<b>P5</b><br/>Фарма"]):::process
+    P6(["<b>P6</b><br/>Медицинское<br/>оборудование"]):::process
+    P7(["<b>P7</b><br/>Корпоративное<br/>управление"]):::process
+    D0[("<b>D0</b><br/>Легаси DWH<br/>SQL Server 2008")]:::legacy
+
+    subgraph DP["Общая облачная платформа данных"]
+        direction TB
+        P8(["<b>P8</b><br/>Принять данные и<br/>проверить контракт"]):::platform
+        D8[("<b>D8</b><br/>Raw-зоны доменов<br/>MinIO")]:::store
+        P9(["<b>P9</b><br/>Выполнить доменные<br/>преобразования и проверки"]):::platform
+        D9[("<b>D9</b><br/>Курируемые data products<br/>MinIO + Iceberg")]:::store
+        D10[("<b>D10</b><br/>Каталог, контракты,<br/>метрики и политики")]:::store
+        P10(["<b>P10</b><br/>Выполнить запрос и<br/>собрать отчёт"]):::platform
+
+        P8 -- "проверенные входные данные" --> D8
+        D8 -- "данные своей доменной зоны" --> P9
+        P9 -- "версионированные data products" --> D9
+        P9 -- "схема, владелец, качество, lineage" --> D10
+        D9 -- "витрины и агрегаты" --> P10
+        D10 -- "определения метрик и права доступа" --> P10
+    end
+
+    E4["Бизнес-пользователь"]:::external
+
+    P1 -- "customer_master,<br/>статистика согласий" --> P8
+    P2 -- "clinic_operations:<br/>услуги, загрузка, ресурсы" --> P8
+    P3 -- "обезличенные<br/>ai_service_metrics" --> P8
+    P4 -- "financial_operations,<br/>loan_portfolio" --> P8
+    P5 -- "pharma_sales, stock, delivery" --> P8
+    P6 -- "device_fleet, maintenance,<br/>техническая телеметрия" --> P8
+    P7 -- "org_structure, workforce,<br/>budget_actual" --> P8
+    D0 -- "CDC / batch только<br/>разрешённых данных" --> P8
+
+    E4 -- "запрос разрешённого среза" --> P10
+    P10 -- "S5 · отчёт или выгрузка" --> E4
+
+    N0["D0 временно остаётся источником,<br/>но новая бизнес-логика и новые<br/>интеграции в него не добавляются."]:::note
+    N8["Медкарты, истории болезни,<br/>снимки и результаты исследований<br/>не принимаются в D8/D9."]:::note
+    D0 -.-> N0
+    P8 -.-> N8
+
+    classDef external fill:#F2F4F7,stroke:#667085,color:#101828,stroke-width:1px;
+    classDef process fill:#EAF2FF,stroke:#2F6FEB,color:#101828,stroke-width:1px;
+    classDef platform fill:#DDF4FF,stroke:#2F6FEB,color:#101828,stroke-width:1px;
+    classDef store fill:#FFF8C5,stroke:#9A6700,color:#3D2F00,stroke-width:1px;
+    classDef legacy fill:#FFE2E0,stroke:#CF222E,color:#5A1015,stroke-width:1px;
+    classDef note fill:#FFFBE6,stroke:#D4A72C,color:#3D2F00,stroke-width:1px;
+    style DP fill:#F8FAFC,stroke:#667085,stroke-width:1px;
+    linkStyle default stroke:#59636E,color:#30363D,stroke-width:1.2px;
